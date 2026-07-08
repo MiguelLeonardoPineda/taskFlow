@@ -1,14 +1,13 @@
 import { Tarea } from "./Tarea.js";
 
 export class GestorTareas {
-
   constructor() {
     this.tareas = [];
   }
 
-  // Crea una nueva tarea y la agrega a la lista.
-  agregarTarea(descripcion) {
-    const nuevaTarea = new Tarea(descripcion);
+  // Crea una nueva tarea (con fecha límite opcional) y la agrega a la lista.
+  agregarTarea(descripcion, fechaLimite = null) {
+    const nuevaTarea = new Tarea(descripcion, fechaLimite);
     this.tareas.push(nuevaTarea);
     return nuevaTarea;
   }

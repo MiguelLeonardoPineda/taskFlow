@@ -10,6 +10,9 @@
   <main>
     <h1>TaskFlow</h1>
 
+    <!-- Zona de notificaciones (asincronía) -->
+    <div id="notificacion"></div>
+
     <!-- Formulario para agregar tareas -->
     <form id="formularioTarea">
       <input
@@ -18,6 +21,7 @@
         placeholder="Escribe una nueva tarea..."
         autocomplete="off"
       >
+      <input type="datetime-local" id="inputFecha">
       <button type="submit">Agregar</button>
     </form>
 
