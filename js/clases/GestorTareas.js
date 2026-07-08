@@ -5,23 +5,45 @@ export class GestorTareas {
     this.tareas = [];
   }
 
-  // Crea una nueva tarea (con fecha límite opcional) y la agrega a la lista.
   agregarTarea(descripcion, fechaLimite = null) {
     const nuevaTarea = new Tarea(descripcion, fechaLimite);
     this.tareas.push(nuevaTarea);
+    this.guardarEnLocalStorage();
     return nuevaTarea;
   }
 
-  // Elimina una tarea: nos quedamos con TODAS menos la del id recibido.
   eliminarTarea(id) {
     this.tareas = this.tareas.filter((tarea) => tarea.id !== id);
+    this.guardarEnLocalStorage();
   }
 
-  // Busca la tarea por id y le pide que cambie su propio estado.
   cambiarEstadoTarea(id) {
     const tareaEncontrada = this.tareas.find((tarea) => tarea.id === id);
     if (tareaEncontrada) {
       tareaEncontrada.cambiarEstado();
+      this.guardarEnLocalStorage();
     }
+  }
+
+  // Guarda la lista completa de tareas en localStorage (como texto).
+  guardarEnLocalStorage() {
+    const tareasComoTexto = JSON.stringify(this.tareas);
+    localStorage.setItem("tareas", tareasComoTexto);
+  }
+
+  // Carga las tareas guardadas desde localStorage al iniciar la app.
+  cargarDesdeLocalStorage() {
+    const tareasGuardadas = localStorage.getItem("tareas");
+
+    // Si no hay nada guardado, dejamos la lista vacía.
+    if (!tareasGuardadas) {
+      return;
+    }
+
+    // Convertimos el texto en array de objetos planos...
+    const objetosPlanos = JSON.parse(tareasGuardadas);
+
+    // ...y reconstruimos cada uno como una instancia real de Tarea.
+    this.tareas = objetosPlanos.map((objeto) => Tarea.desdeObjeto(objeto));
   }
 }

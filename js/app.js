@@ -3,6 +3,9 @@ import { GestorTareas } from "./clases/GestorTareas.js";
 // El gestor: el "cerebro" que guarda todas las tareas.
 const gestor = new GestorTareas();
 
+// URL de la API de práctica (JSONPlaceholder).
+const URL_API = "https://jsonplaceholder.typicode.com/todos";
+
 // --- Elementos del DOM ---
 const formularioTarea = document.getElementById("formularioTarea");
 const inputTarea = document.getElementById("inputTarea");
@@ -10,6 +13,7 @@ const inputFecha = document.getElementById("inputFecha");
 const listaTareas = document.getElementById("listaTareas");
 const contadorCaracteres = document.getElementById("contadorCaracteres");
 const notificacion = document.getElementById("notificacion");
+const botonCargarApi = document.getElementById("botonCargarApi");
 
 // --- Función que muestra una notificación temporal ---
 const mostrarNotificacion = (mensaje) => {
@@ -105,6 +109,62 @@ const renderizarTareas = () => {
   });
 };
 
+// --- Trae tareas de ejemplo desde la API (GET con fetch) ---
+const cargarTareasDesdeApi = async () => {
+  try {
+    mostrarNotificacion("Consultando API...");
+
+    // Pedimos solo 5 tareas para no llenar la lista.
+    const respuesta = await fetch(`${URL_API}?_limit=5`);
+
+    // Si la respuesta no fue exitosa, lanzamos un error a propósito.
+    if (!respuesta.ok) {
+      throw new Error(`Error HTTP: ${respuesta.status}`);
+    }
+
+    // Convertimos la respuesta en datos utilizables (array de objetos).
+    const datos = await respuesta.json();
+
+    // Por cada dato recibido, agregamos una tarea a nuestro gestor.
+    datos.forEach((item) => {
+      gestor.agregarTarea(item.title);
+    });
+
+    renderizarTareas();
+    mostrarNotificacion("¡Tareas de ejemplo cargadas!");
+  } catch (error) {
+    // Si algo falla (sin internet, API caída, etc.), lo capturamos aquí.
+    console.error("Error al cargar desde la API:", error);
+    mostrarNotificacion("No se pudieron cargar las tareas de la API.");
+  }
+};
+
+// --- Envía una tarea a la API (POST con fetch) ---
+// Nota: JSONPlaceholder NO guarda de verdad; responde como si lo hiciera.
+const enviarTareaAApi = async (descripcion) => {
+  try {
+    const respuesta = await fetch(URL_API, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        title: descripcion,
+        completed: false,
+      }),
+    });
+
+    if (!respuesta.ok) {
+      throw new Error(`Error HTTP: ${respuesta.status}`);
+    }
+
+    const datos = await respuesta.json();
+    console.log("Respuesta de la API (POST simulado):", datos);
+  } catch (error) {
+    console.error("Error al enviar a la API:", error);
+  }
+};
+
 // --- Evento submit: agregar una tarea nueva (con retardo simulado) ---
 formularioTarea.addEventListener("submit", (evento) => {
   // Evitamos que el formulario recargue la página.
@@ -128,6 +188,9 @@ formularioTarea.addEventListener("submit", (evento) => {
     gestor.agregarTarea(descripcion, fechaLimite);
     renderizarTareas();
     mostrarNotificacion("¡Tarea agregada!");
+
+    // Además, enviamos la tarea a la API como demostración de consumo.
+    enviarTareaAApi(descripcion);
   }, 1000);
 
   // Los campos se limpian de inmediato, sin esperar el retardo.
@@ -140,6 +203,11 @@ formularioTarea.addEventListener("submit", (evento) => {
 inputTarea.addEventListener("keyup", () => {
   const cantidad = inputTarea.value.length;
   contadorCaracteres.textContent = `${cantidad} caracteres`;
+});
+
+// --- Evento click en el botón de cargar desde la API ---
+botonCargarApi.addEventListener("click", () => {
+  cargarTareasDesdeApi();
 });
 
 // --- setInterval global: actualiza todos los contadores cada segundo ---
@@ -155,3 +223,7 @@ setInterval(() => {
     }
   });
 }, 1000);
+
+// --- Al iniciar la app: cargamos las tareas guardadas y las mostramos ---
+gestor.cargarDesdeLocalStorage();
+renderizarTareas();
