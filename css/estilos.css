@@ -1,0 +1,77 @@
+/* Tipografía y centrado general de la página */
+body {
+  font-family: system-ui, sans-serif;
+  background-color: #f7f7f7;
+  margin: 0;
+  padding: 20px;
+}
+
+/* Contenedor principal centrado y con ancho máximo */
+main {
+  max-width: 500px;
+  margin: 0 auto;
+  background-color: #ffffff;
+  padding: 24px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  text-align: center;
+  color: #333333;
+}
+
+/* Formulario: input y botón en fila */
+form {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+#inputTarea {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+}
+
+/* Contador de caracteres */
+#contadorCaracteres {
+  font-size: 12px;
+  color: #888;
+  margin: 0 0 16px 0;
+}
+
+/* Lista de tareas */
+#listaTareas {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+#listaTareas li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  border-bottom: 1px solid #eeeeee;
+}
+
+/* El texto de la tarea ocupa el espacio disponible */
+#listaTareas li span {
+  flex: 1;
+}
+
+/* Botones en general */
+button {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: #4a90d9;
+  color: white;
+}
+
+button:hover {
+  background-color: #357ab8;
+}

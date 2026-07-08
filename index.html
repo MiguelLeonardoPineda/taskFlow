@@ -4,10 +4,29 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TaskFlow - Gestor de Tareas</title>
+  <link rel="stylesheet" href="css/estilos.css">
 </head>
 <body>
-  <h1>TaskFlow</h1>
+  <main>
+    <h1>TaskFlow</h1>
 
+    <!-- Formulario para agregar tareas -->
+    <form id="formularioTarea">
+      <input
+        type="text"
+        id="inputTarea"
+        placeholder="Escribe una nueva tarea..."
+        autocomplete="off"
+      >
+      <button type="submit">Agregar</button>
+    </form>
+
+    <!-- Contador de caracteres (evento keyup) -->
+    <p id="contadorCaracteres">0 caracteres</p>
+
+    <!-- Contenedor donde JavaScript pintará las tareas -->
+    <ul id="listaTareas"></ul>
+  </main>
 
   <script type="module" src="js/app.js"></script>
 </body>
