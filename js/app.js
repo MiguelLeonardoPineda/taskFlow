@@ -1,21 +1,20 @@
 import { GestorTareas } from "./clases/GestorTareas.js";
 
-// El gestor: el "cerebro" que guarda todas las tareas.
+
 const gestor = new GestorTareas();
 
-// URL de la API de práctica (JSONPlaceholder).
+// URL de la API de práctica JSON Placeholder.
 const URL_API = "https://jsonplaceholder.typicode.com/todos";
 
-// --- Elementos del DOM ---
+//  Elementos del DOM 
 const formularioTarea = document.getElementById("formularioTarea");
 const inputTarea = document.getElementById("inputTarea");
 const inputFecha = document.getElementById("inputFecha");
 const listaTareas = document.getElementById("listaTareas");
 const contadorCaracteres = document.getElementById("contadorCaracteres");
 const notificacion = document.getElementById("notificacion");
-const botonCargarApi = document.getElementById("botonCargarApi");
 
-// --- Función que muestra una notificación temporal ---
+//  Función que muestra una notificación temporal 
 const mostrarNotificacion = (mensaje) => {
   notificacion.textContent = mensaje;
   setTimeout(() => {
@@ -23,13 +22,13 @@ const mostrarNotificacion = (mensaje) => {
   }, 2000);
 };
 
-// --- Calcula el texto del tiempo restante para una fecha límite ---
+// Calcula el texto del tiempo restante para una fecha límite 
 const calcularTiempoRestante = (fechaLimite) => {
   const ahora = new Date();
   const diferencia = fechaLimite - ahora;
 
   if (diferencia <= 0) {
-    return "¡Tiempo cumplido!";
+    return "tiempo cumplido";
   }
 
   const horas = Math.floor(diferencia / (1000 * 60 * 60));
@@ -44,7 +43,6 @@ const renderizarTareas = () => {
   listaTareas.innerHTML = "";
 
   gestor.tareas.forEach((tarea) => {
-    // Creamos el <li> y le damos su clase base.
     const elementoTarea = document.createElement("li");
     elementoTarea.classList.add("tarea");
 
@@ -61,7 +59,6 @@ const renderizarTareas = () => {
     textoTarea.classList.add("tarea-texto");
     textoTarea.textContent = tarea.descripcion;
 
-    // Si está completada, agregamos la clase que la tacha (definida en CSS).
     if (tarea.estado === "completada") {
       textoTarea.classList.add("tarea-completada");
     }
@@ -91,7 +88,7 @@ const renderizarTareas = () => {
       renderizarTareas();
     });
 
-    // --- Armamos el <li> y lo metemos en el <ul> ---
+    //  Agregamos todos los elementos al DOM
     elementoTarea.appendChild(textoTarea);
     elementoTarea.appendChild(contadorTarea);
     elementoTarea.appendChild(botonCompletar);
@@ -100,37 +97,7 @@ const renderizarTareas = () => {
   });
 };
 
-// --- Trae tareas de ejemplo desde la API (GET con fetch) ---
-const cargarTareasDesdeApi = async () => {
-  try {
-    mostrarNotificacion("Consultando API...");
-
-    const respuesta = await fetch(`${URL_API}?_limit=5`);
-
-    if (!respuesta.ok) {
-      throw new Error(`Error HTTP: ${respuesta.status}`);
-    }
-
-    const datos = await respuesta.json();
-
-    datos.forEach((item) => {
-      gestor.agregarTarea(item.title);
-    });
-
-    renderizarTareas();
-    mostrarNotificacion("¡Tareas de ejemplo cargadas!");
-
-    // Evitamos duplicados: deshabilitamos el botón tras cargarlas una vez.
-    botonCargarApi.disabled = true;
-    botonCargarApi.textContent = "Tareas de ejemplo ya cargadas";
-  } catch (error) {
-    console.error("Error al cargar desde la API:", error);
-    mostrarNotificacion("No se pudieron cargar las tareas de la API.");
-  }
-};
-
-// --- Envía una tarea a la API (POST con fetch) ---
-// Nota: JSONPlaceholder NO guarda de verdad; responde como si lo hiciera.
+// --- Función que envía la tarea a la API  ---
 const enviarTareaAApi = async (descripcion) => {
   try {
     const respuesta = await fetch(URL_API, {
@@ -155,7 +122,7 @@ const enviarTareaAApi = async (descripcion) => {
   }
 };
 
-// --- Evento submit: agregar una tarea nueva (con retardo simulado) ---
+//  Evento submit
 formularioTarea.addEventListener("submit", (evento) => {
   evento.preventDefault();
 
@@ -180,18 +147,13 @@ formularioTarea.addEventListener("submit", (evento) => {
   contadorCaracteres.textContent = "0 caracteres";
 });
 
-// --- Evento keyup: contar caracteres mientras el usuario escribe ---
+// Evento keyup: contar caracteres mientras el usuario escribe 
 inputTarea.addEventListener("keyup", () => {
   const cantidad = inputTarea.value.length;
   contadorCaracteres.textContent = `${cantidad} caracteres`;
 });
 
-// --- Evento click en el botón de cargar desde la API ---
-botonCargarApi.addEventListener("click", () => {
-  cargarTareasDesdeApi();
-});
-
-// --- setInterval global: actualiza todos los contadores cada segundo ---
+//  setInterval global actualiza todos los contadores cada segundo 
 setInterval(() => {
   gestor.tareas.forEach((tarea) => {
     if (tarea.fechaLimite) {
@@ -203,6 +165,6 @@ setInterval(() => {
   });
 }, 1000);
 
-// --- Al iniciar la app: cargamos las tareas guardadas y las mostramos ---
+//  Al iniciar la app, cargamos las tareas guardadas y las mostramos 
 gestor.cargarDesdeLocalStorage();
 renderizarTareas();

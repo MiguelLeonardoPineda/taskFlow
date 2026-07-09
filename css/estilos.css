@@ -56,11 +56,6 @@ form {
   margin: 0 0 16px 0;
 }
 
-/* Botón de cargar desde API */
-#botonCargarApi {
-  margin-bottom: 16px;
-}
-
 /* Lista de tareas */
 #listaTareas {
   list-style: none;
@@ -68,7 +63,7 @@ form {
   margin: 0;
 }
 
-/* Cada tarea (reemplaza los estilos que antes poníamos desde JS) */
+/* Cada tarea */
 .tarea {
   display: flex;
   align-items: center;
@@ -77,7 +72,7 @@ form {
   border-bottom: 1px solid #eee;
 }
 
-/* Resaltado al pasar el mouse (antes: .style.backgroundColor en JS) */
+/* Resaltado al pasar el mouse */
 .tarea-resaltada {
   background-color: #f0f0f0;
 }
@@ -87,13 +82,13 @@ form {
   flex: 1;
 }
 
-/* Tarea completada: tachada (antes: .style.textDecoration en JS) */
+/* Tarea completada: tachada */
 .tarea-completada {
   text-decoration: line-through;
   color: #999;
 }
 
-/* Contador regresivo (antes: .style en JS) */
+/* Contador regresivo */
 .tarea-contador {
   font-size: 12px;
   color: #c0392b;
@@ -112,10 +107,4 @@ button {
 
 button:hover {
   background-color: #357ab8;
-}
-
-/* Botón deshabilitado (cuando ya se cargaron las tareas de la API) */
-button:disabled {
-  background-color: #b0b0b0;
-  cursor: not-allowed;
 }
