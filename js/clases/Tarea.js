@@ -21,10 +21,9 @@ export class Tarea {
   // (por ejemplo, uno recuperado de localStorage).
   static desdeObjeto(objeto) {
     const tarea = new Tarea(objeto.descripcion, objeto.fechaLimite);
-    tarea.id = objeto.id;                 // Conservamos el id original.
-    tarea.estado = objeto.estado;         // Conservamos el estado guardado.
+    tarea.id = objeto.id;
+    tarea.estado = objeto.estado;
     tarea.fechaCreacion = objeto.fechaCreacion;
-    // Si había fecha límite guardada, la volvemos a convertir en Date.
     tarea.fechaLimite = objeto.fechaLimite ? new Date(objeto.fechaLimite) : null;
     return tarea;
   }

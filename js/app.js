@@ -18,8 +18,6 @@ const botonCargarApi = document.getElementById("botonCargarApi");
 // --- Función que muestra una notificación temporal ---
 const mostrarNotificacion = (mensaje) => {
   notificacion.textContent = mensaje;
-
-  // La notificación desaparece sola tras 2 segundos.
   setTimeout(() => {
     notificacion.textContent = "";
   }, 2000);
@@ -28,14 +26,12 @@ const mostrarNotificacion = (mensaje) => {
 // --- Calcula el texto del tiempo restante para una fecha límite ---
 const calcularTiempoRestante = (fechaLimite) => {
   const ahora = new Date();
-  const diferencia = fechaLimite - ahora; // diferencia en milisegundos
+  const diferencia = fechaLimite - ahora;
 
-  // Si ya se pasó la fecha, avisamos.
   if (diferencia <= 0) {
     return "¡Tiempo cumplido!";
   }
 
-  // Convertimos los milisegundos a horas, minutos y segundos.
   const horas = Math.floor(diferencia / (1000 * 60 * 60));
   const minutos = Math.floor((diferencia % (1000 * 60 * 60)) / (1000 * 60));
   const segundos = Math.floor((diferencia % (1000 * 60)) / 1000);
@@ -45,38 +41,35 @@ const calcularTiempoRestante = (fechaLimite) => {
 
 // --- Función que dibuja TODAS las tareas en pantalla ---
 const renderizarTareas = () => {
-  // 1. Vaciamos la lista para redibujarla desde cero.
   listaTareas.innerHTML = "";
 
-  // 2. Recorremos cada tarea del gestor.
   gestor.tareas.forEach((tarea) => {
-    // Creamos el <li> contenedor de esta tarea.
+    // Creamos el <li> y le damos su clase base.
     const elementoTarea = document.createElement("li");
+    elementoTarea.classList.add("tarea");
 
-    // --- Evento mouseover: resaltar la tarea al pasar el mouse ---
+    // --- Eventos mouseover/mouseout: agregar y quitar clase de resaltado ---
     elementoTarea.addEventListener("mouseover", () => {
-      elementoTarea.style.backgroundColor = "#f0f0f0";
+      elementoTarea.classList.add("tarea-resaltada");
     });
-
-    // --- Evento mouseout: quitar el resaltado al salir el mouse ---
     elementoTarea.addEventListener("mouseout", () => {
-      elementoTarea.style.backgroundColor = "";
+      elementoTarea.classList.remove("tarea-resaltada");
     });
 
     // --- Texto de la tarea ---
     const textoTarea = document.createElement("span");
+    textoTarea.classList.add("tarea-texto");
     textoTarea.textContent = tarea.descripcion;
 
-    // Si la tarea está completada, la mostramos tachada.
+    // Si está completada, agregamos la clase que la tacha (definida en CSS).
     if (tarea.estado === "completada") {
-      textoTarea.style.textDecoration = "line-through";
+      textoTarea.classList.add("tarea-completada");
     }
 
     // --- Contador regresivo (solo si la tarea tiene fecha límite) ---
     const contadorTarea = document.createElement("span");
-    contadorTarea.id = `contador-${tarea.id}`; // id único para actualizarlo luego
-    contadorTarea.style.fontSize = "12px";
-    contadorTarea.style.color = "#c0392b";
+    contadorTarea.classList.add("tarea-contador");
+    contadorTarea.id = `contador-${tarea.id}`;
     if (tarea.fechaLimite) {
       contadorTarea.textContent = calcularTiempoRestante(tarea.fechaLimite);
     }
@@ -85,7 +78,6 @@ const renderizarTareas = () => {
     const botonCompletar = document.createElement("button");
     botonCompletar.textContent =
       tarea.estado === "pendiente" ? "Completar" : "Reactivar";
-
     botonCompletar.addEventListener("click", () => {
       gestor.cambiarEstadoTarea(tarea.id);
       renderizarTareas();
@@ -94,13 +86,12 @@ const renderizarTareas = () => {
     // --- Botón eliminar ---
     const botonEliminar = document.createElement("button");
     botonEliminar.textContent = "Eliminar";
-
     botonEliminar.addEventListener("click", () => {
       gestor.eliminarTarea(tarea.id);
       renderizarTareas();
     });
 
-    // --- Armamos el <li> con todas sus piezas y lo metemos en el <ul> ---
+    // --- Armamos el <li> y lo metemos en el <ul> ---
     elementoTarea.appendChild(textoTarea);
     elementoTarea.appendChild(contadorTarea);
     elementoTarea.appendChild(botonCompletar);
@@ -114,26 +105,25 @@ const cargarTareasDesdeApi = async () => {
   try {
     mostrarNotificacion("Consultando API...");
 
-    // Pedimos solo 5 tareas para no llenar la lista.
     const respuesta = await fetch(`${URL_API}?_limit=5`);
 
-    // Si la respuesta no fue exitosa, lanzamos un error a propósito.
     if (!respuesta.ok) {
       throw new Error(`Error HTTP: ${respuesta.status}`);
     }
 
-    // Convertimos la respuesta en datos utilizables (array de objetos).
     const datos = await respuesta.json();
 
-    // Por cada dato recibido, agregamos una tarea a nuestro gestor.
     datos.forEach((item) => {
       gestor.agregarTarea(item.title);
     });
 
     renderizarTareas();
     mostrarNotificacion("¡Tareas de ejemplo cargadas!");
+
+    // Evitamos duplicados: deshabilitamos el botón tras cargarlas una vez.
+    botonCargarApi.disabled = true;
+    botonCargarApi.textContent = "Tareas de ejemplo ya cargadas";
   } catch (error) {
-    // Si algo falla (sin internet, API caída, etc.), lo capturamos aquí.
     console.error("Error al cargar desde la API:", error);
     mostrarNotificacion("No se pudieron cargar las tareas de la API.");
   }
@@ -167,33 +157,24 @@ const enviarTareaAApi = async (descripcion) => {
 
 // --- Evento submit: agregar una tarea nueva (con retardo simulado) ---
 formularioTarea.addEventListener("submit", (evento) => {
-  // Evitamos que el formulario recargue la página.
   evento.preventDefault();
 
-  // Leemos lo escrito y quitamos espacios sobrantes.
   const descripcion = inputTarea.value.trim();
 
-  // Si está vacío, no hacemos nada.
   if (descripcion === "") {
     return;
   }
 
-  // Mostramos un mensaje de "cargando" inmediatamente.
   mostrarNotificacion("Agregando tarea...");
 
-  // Simulamos un retardo de 1 segundo (como si guardáramos en un servidor).
   setTimeout(() => {
-    // Si el usuario eligió fecha, la convertimos a Date; si no, null.
     const fechaLimite = inputFecha.value ? new Date(inputFecha.value) : null;
     gestor.agregarTarea(descripcion, fechaLimite);
     renderizarTareas();
     mostrarNotificacion("¡Tarea agregada!");
-
-    // Además, enviamos la tarea a la API como demostración de consumo.
     enviarTareaAApi(descripcion);
   }, 1000);
 
-  // Los campos se limpian de inmediato, sin esperar el retardo.
   inputTarea.value = "";
   inputFecha.value = "";
   contadorCaracteres.textContent = "0 caracteres";
@@ -213,9 +194,7 @@ botonCargarApi.addEventListener("click", () => {
 // --- setInterval global: actualiza todos los contadores cada segundo ---
 setInterval(() => {
   gestor.tareas.forEach((tarea) => {
-    // Solo si la tarea tiene fecha límite.
     if (tarea.fechaLimite) {
-      // Buscamos el <span> del contador de esta tarea por su id.
       const contador = document.getElementById(`contador-${tarea.id}`);
       if (contador) {
         contador.textContent = calcularTiempoRestante(tarea.fechaLimite);

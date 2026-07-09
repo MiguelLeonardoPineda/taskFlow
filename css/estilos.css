@@ -1,4 +1,4 @@
-/* Tipografía y centrado general de la página */
+/* Tipografía y fondo general */
 body {
   font-family: system-ui, sans-serif;
   background-color: #f7f7f7;
@@ -6,7 +6,7 @@ body {
   padding: 20px;
 }
 
-/* Contenedor principal centrado y con ancho máximo */
+/* Contenedor principal centrado */
 main {
   max-width: 500px;
   margin: 0 auto;
@@ -18,10 +18,18 @@ main {
 
 h1 {
   text-align: center;
-  color: #333333;
+  color: #333;
 }
 
-/* Formulario: input y botón en fila */
+/* Notificación */
+#notificacion {
+  text-align: center;
+  color: #2c7a2c;
+  min-height: 20px;
+  font-size: 14px;
+}
+
+/* Formulario en fila */
 form {
   display: flex;
   gap: 8px;
@@ -31,7 +39,13 @@ form {
 #inputTarea {
   flex: 1;
   padding: 8px;
-  border: 1px solid #cccccc;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+#inputFecha {
+  padding: 8px;
+  border: 1px solid #ccc;
   border-radius: 4px;
 }
 
@@ -42,6 +56,11 @@ form {
   margin: 0 0 16px 0;
 }
 
+/* Botón de cargar desde API */
+#botonCargarApi {
+  margin-bottom: 16px;
+}
+
 /* Lista de tareas */
 #listaTareas {
   list-style: none;
@@ -49,20 +68,39 @@ form {
   margin: 0;
 }
 
-#listaTareas li {
+/* Cada tarea (reemplaza los estilos que antes poníamos desde JS) */
+.tarea {
   display: flex;
   align-items: center;
   gap: 8px;
   padding: 10px;
-  border-bottom: 1px solid #eeeeee;
+  border-bottom: 1px solid #eee;
 }
 
-/* El texto de la tarea ocupa el espacio disponible */
-#listaTareas li span {
+/* Resaltado al pasar el mouse (antes: .style.backgroundColor en JS) */
+.tarea-resaltada {
+  background-color: #f0f0f0;
+}
+
+/* El texto ocupa el espacio disponible */
+.tarea-texto {
   flex: 1;
 }
 
-/* Botones en general */
+/* Tarea completada: tachada (antes: .style.textDecoration en JS) */
+.tarea-completada {
+  text-decoration: line-through;
+  color: #999;
+}
+
+/* Contador regresivo (antes: .style en JS) */
+.tarea-contador {
+  font-size: 12px;
+  color: #c0392b;
+  white-space: nowrap;
+}
+
+/* Botones */
 button {
   padding: 6px 12px;
   border: none;
@@ -74,4 +112,10 @@ button {
 
 button:hover {
   background-color: #357ab8;
+}
+
+/* Botón deshabilitado (cuando ya se cargaron las tareas de la API) */
+button:disabled {
+  background-color: #b0b0b0;
+  cursor: not-allowed;
 }
